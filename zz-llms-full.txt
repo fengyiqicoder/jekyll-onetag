@@ -1,0 +1,65 @@
+---
+layout: null
+permalink: /llms-full.txt
+sitemap: false
+---
+{%- comment -%}
+  jekyll-onetag: llms-full.txt, the text of every page in one file. Per page:
+    # Title
+    (blank line)
+    Source: absolute URL
+    (blank line)
+    the page text, with its own headings moved down to ### and below
+  The Ask AI box splits this file at "# " and "## " lines, so every page is one entry with its own link.
+  The file name starts with "zz-" on purpose: Jekyll renders pages in file name order, and pages that
+  come before this one are already converted to HTML when it reads them. The output is /llms-full.txt.
+  Needs _includes/onetag-pages.html. https://github.com/fengyiqicoder/jekyll-onetag
+{%- endcomment -%}
+{%- include onetag-pages.html -%}
+{%- capture nl %}
+{% endcapture -%}
+{%- for d in onetag_docs -%}
+{%- assign html = d.content -%}
+{%- comment -%} A page added by a plugin after this file (such as one without front matter on GitHub Pages) is still Markdown. {%- endcomment -%}
+{%- unless html contains "<p" or html contains "<h" or html contains "<li" or html contains "<div" or html contains "<pre" -%}{%- assign html = html | markdownify -%}{%- endunless -%}
+{%- comment -%} Code blocks first: keep their line breaks and spaces, fence them. {%- endcomment -%}
+{%- assign parts = html | split: "<pre" -%}
+{%- capture html -%}
+{%- for part in parts -%}
+{%- if forloop.first -%}{{ part }}{%- continue -%}{%- endif -%}
+{%- assign bits = part | split: "</pre>" -%}
+{%- assign code = "<pre" | append: bits[0] | append: "</pre>" | strip_html | rstrip | replace: nl, "%%CN%%" | replace: " ", "%%SP%%" -%}
+%%NL%%%%NL%%```%%CN%%{{ code }}%%CN%%```%%NL%%%%NL%%
+{%- for b in bits offset: 1 -%}{%- unless forloop.first -%}</pre>{%- endunless -%}{{ b }}{%- endfor -%}
+{%- endfor -%}
+{%- endcapture -%}
+{%- comment -%} Then the rest: block tags become line breaks, headings move down to ###. {%- endcomment -%}
+{%- assign text = html | replace: nl, " "
+  | replace: "<h1", "%%NL%%%%NL%%### <h1" | replace: "<h2", "%%NL%%%%NL%%### <h2" | replace: "<h3", "%%NL%%%%NL%%#### <h3"
+  | replace: "<h4", "%%NL%%%%NL%%##### <h4" | replace: "<h5", "%%NL%%%%NL%%##### <h5" | replace: "<h6", "%%NL%%%%NL%%##### <h6"
+  | replace: "</h", "%%NL%%%%NL%%</h"
+  | replace: "<p>", "%%NL%%%%NL%%<p>" | replace: "<p ", "%%NL%%%%NL%%<p "
+  | replace: "<ul", "%%NL%%%%NL%%<ul" | replace: "<ol", "%%NL%%%%NL%%<ol" | replace: "</ul>", "%%NL%%%%NL%%" | replace: "</ol>", "%%NL%%%%NL%%"
+  | replace: "<li", "%%NL%%%%LI%%<li" | replace: "<dt", "%%NL%%%%NL%%<dt" | replace: "<dd", "%%NL%%<dd"
+  | replace: "<blockquote", "%%NL%%%%NL%%<blockquote" | replace: "</blockquote>", "%%NL%%%%NL%%"
+  | replace: "<table", "%%NL%%%%NL%%<table" | replace: "</table>", "%%NL%%%%NL%%" | replace: "<tr", "%%NL%%| <tr"
+  | replace: "</th>", " |</th>" | replace: "</td>", " |</td>"
+  | replace: "<br", "%%NL%%<br" | replace: "</div>", "%%NL%%</div>"
+  | replace: '<code class="language-plaintext highlighter-rouge">', "`" | replace: "<code>", "`" | replace: "</code>", "`"
+  | strip_html | split: " " | join: " "
+  | replace: " %%NL%%", "%%NL%%" | replace: "%%NL%% ", "%%NL%%"
+  | replace: "%%NL%%%%NL%%%%NL%%", "%%NL%%%%NL%%" | replace: "%%NL%%%%NL%%%%NL%%", "%%NL%%%%NL%%" | replace: "%%NL%%%%NL%%%%NL%%", "%%NL%%%%NL%%"
+  | replace: "%%NL%%%%NL%%%%NL%%", "%%NL%%%%NL%%" | replace: "%%NL%%%%NL%%%%NL%%", "%%NL%%%%NL%%" | replace: "%%NL%%%%NL%%%%NL%%", "%%NL%%%%NL%%"
+  | replace: "%%LI%%%%NL%%%%NL%%", "%%LI%%" | replace: "%%LI%%%%NL%%", "%%LI%%" | replace: "%%LI%%", "- "
+  | replace: "%%NL%%", nl | replace: "%%CN%%", nl | replace: "%%SP%%", " "
+  | replace: "&#8217;", "'" | replace: "&#8216;", "'" | replace: "&#8220;", '"' | replace: "&#8221;", '"' | replace: "&#8230;", "..."
+  | replace: "&#8211;", "-" | replace: "&#8212;", "-" | replace: "&nbsp;", " " | replace: "&#160;", " "
+  | replace: "&quot;", '"' | replace: "&#39;", "'" | replace: "&lt;", "<" | replace: "&gt;", ">" | replace: "&amp;", "&"
+  | strip -%}
+# {{ d.title | default: d.name | strip_html | normalize_whitespace }}
+
+Source: {{ d.url | absolute_url }}
+
+{{ text }}
+
+{% endfor -%}

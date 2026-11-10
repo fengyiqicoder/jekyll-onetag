@@ -1,0 +1,22 @@
+{%- comment -%}
+  jekyll-onetag: the Ask AI box. Put {% include onetag.html %} right before </body> in your layout.
+  Settings come from the onetag: block of _config.yml. https://github.com/fengyiqicoder/jekyll-onetag
+{%- endcomment -%}
+{%- assign onetag = site.onetag -%}
+{%- if onetag.ask_ai != false and onetag.askAi != false -%}
+{%- assign onetag_key = onetag.key | default: "" | strip -%}
+{%- if onetag_key == "" or onetag_key contains "..." -%}
+<!-- jekyll-onetag: no key in _config.yml, so the demo key is used. It answers on localhost only. Get a free key: curl -X POST https://onetagai.com/api/signup -H "Content-Type: application/json" -d '{"email":"you@example.com"}' -->
+{%- assign onetag_key = "ot_demo000000000000000000000" -%}
+{%- endif -%}
+{%- assign onetag_names = "label,placeholder,position,button,color,theme,lang,rules" | split: "," %}
+<script async src="https://onetagai.com/ask-docs.js" data-key="{{ onetag_key | escape }}" data-ref="jekyll-onetag"
+{%- for name in onetag_names -%}
+{%- assign value = onetag[name] -%}
+{%- if value != nil and value != "" -%}
+{%- if name == "color" %}{% assign value = value | remove: "#" %}{% endif %} data-{{ name }}="{{ value | escape }}"
+{%- endif -%}
+{%- endfor -%}
+{%- if onetag.index %} data-index="{{ onetag.index | relative_url | escape }}"{% endif -%}
+></script>
+{%- endif -%}

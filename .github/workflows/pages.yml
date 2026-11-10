@@ -1,0 +1,56 @@
+# Builds this site with the same gems as GitHub Pages, and adds the demo key from a repository
+# secret. Settings > Pages > Source: "GitHub Actions". Settings > Secrets and variables > Actions:
+# ONETAG_KEY. Your own site does not need this file: stock "Deploy from a branch" works, with the
+# key written in _config.yml.
+name: Publish the site
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: true
+      - id: pages
+        uses: actions/configure-pages@v5
+      - name: Add the demo key
+        env:
+          ONETAG_KEY: ${{ secrets.ONETAG_KEY }}
+        run: |
+          if [ -n "$ONETAG_KEY" ]; then
+            printf 'onetag:\n  key: "%s"\n' "$ONETAG_KEY" > _config.demo.yml
+          else
+            echo "No ONETAG_KEY secret: the box will use the demo key." > /dev/stderr
+            : > _config.demo.yml
+          fi
+      - name: Build
+        env:
+          JEKYLL_ENV: production
+        run: bundle exec jekyll build --config _config.yml,_config.demo.yml --baseurl "${{ steps.pages.outputs.base_path }}"
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

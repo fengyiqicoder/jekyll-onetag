@@ -1,0 +1,23 @@
+---
+layout: null
+permalink: /llms.txt
+sitemap: false
+---
+{%- comment -%}
+  jekyll-onetag: llms.txt, an index of the site in the llmstxt.org shape.
+  Needs _includes/onetag-pages.html. https://github.com/fengyiqicoder/jekyll-onetag
+{%- endcomment -%}
+{%- include onetag-pages.html -%}
+# {{ site.title | default: "Site" | strip_html | normalize_whitespace }}
+{% if site.description %}
+> {{ site.description | strip_html | normalize_whitespace }}
+{% endif %}
+## Pages
+
+{% for d in onetag_docs -%}
+{%- assign about = d.description | default: d.excerpt | default: "" | strip_html | normalize_whitespace | replace: "&#8217;", "'" | replace: "&#8216;", "'" | replace: "&#8220;", '"' | replace: "&#8221;", '"' | replace: "&quot;", '"' | replace: "&#39;", "'" | replace: "&lt;", "<" | replace: "&gt;", ">" | replace: "&amp;", "&" | truncate: 160 -%}
+- [{{ d.title | default: d.name | strip_html | normalize_whitespace | remove: "[" | remove: "]" }}]({{ d.url | absolute_url }}){% if about != "" %}: {{ about }}{% endif %}
+{% endfor %}
+## Optional
+
+- [Full text of every page]({{ "/llms-full.txt" | absolute_url }})

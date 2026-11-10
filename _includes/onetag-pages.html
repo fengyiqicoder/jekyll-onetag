@@ -1,0 +1,34 @@
+{%- comment -%}
+  jekyll-onetag: sets onetag_docs, the pages, posts and collection documents that llms.txt and
+  llms-full.txt list. Left out: non-HTML files, 404, redirects, pagination pages, empty pages,
+  anything with llms: false or sitemap: false in its front matter, and URLs that start with one of
+  the prefixes in onetag.exclude.
+{%- endcomment -%}
+{%- assign onetag_exclude = site.onetag.exclude | default: empty -%}
+{%- assign onetag_paged = "" -%}
+{%- if site.paginate -%}{%- assign onetag_paged = site.paginate_path | default: "/page:num/" | split: ":num" | first -%}{%- endif -%}
+{%- assign onetag_all = site.pages | sort: "url" | concat: site.posts -%}
+{%- for c in site.collections -%}
+{%- if c.output and c.label != "posts" -%}{%- assign onetag_all = onetag_all | concat: c.docs -%}{%- endif -%}
+{%- endfor -%}
+{%- assign onetag_docs = "" | split: "" -%}
+{%- for d in onetag_all -%}
+{%- assign u = d.url | default: "" -%}
+{%- assign tail = u | slice: -1, 1 -%}
+{%- assign tail5 = u | slice: -5, 5 -%}
+{%- unless tail == "/" or tail5 == ".html" -%}{%- continue -%}{%- endunless -%}
+{%- if d.llms == false or d.sitemap == false or d.redirect_to or u contains "/404" -%}{%- continue -%}{%- endif -%}
+{%- if onetag_paged != "" and onetag_paged != "/" -%}
+{%- assign head = u | slice: 0, onetag_paged.size -%}
+{%- if head == onetag_paged and u != "/" -%}{%- continue -%}{%- endif -%}
+{%- endif -%}
+{%- assign skip = false -%}
+{%- for prefix in onetag_exclude -%}
+{%- assign head = u | slice: 0, prefix.size -%}
+{%- if head == prefix -%}{%- assign skip = true -%}{%- endif -%}
+{%- endfor -%}
+{%- if skip -%}{%- continue -%}{%- endif -%}
+{%- assign text = d.content | strip_html | strip -%}
+{%- if text == "" -%}{%- continue -%}{%- endif -%}
+{%- assign onetag_docs = onetag_docs | push: d -%}
+{%- endfor -%}
