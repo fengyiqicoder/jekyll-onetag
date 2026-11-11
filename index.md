@@ -35,4 +35,4 @@ The full steps are on [Install]({{ "/install/" | relative_url }}).
 
 - **No plugin and no gem.** It works on stock GitHub Pages, with "Deploy from a branch".
 - **No server and no crawler.** The files are rebuilt with your site, so they are never out of date.
-- **No AI provider account.** The key is a OneTag AI key, made to sit in a public page. Free: 1,000,000 tokens a month.
+- **No AI provider account.** The key is a OneTag AI key, made to sit in a public page. Free: 1,000,000 tokens, one time, no monthly reset.

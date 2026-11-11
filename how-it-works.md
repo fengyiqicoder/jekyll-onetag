@@ -49,4 +49,4 @@ This is what the AI is told, unless you replace it with the `rules` option:
 
 With each question the browser sends OneTag AI the question, the passages picked from your already public pages, and the conversation so far. Nothing is sent before a reader asks.
 
-OneTag AI does not store questions, passages or answers. It logs token counts, the time, which key was used and the hostname of the site, to count the monthly allowance. The details are on the [privacy page](https://onetagai.com/privacy?ref=jekyll-onetag).
+OneTag AI does not store questions, passages or answers. It logs token counts, the time, which key was used and the hostname of the site, to count the allowance. The details are on the [privacy page](https://onetagai.com/privacy?ref=jekyll-onetag).

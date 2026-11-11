@@ -51,7 +51,7 @@ onetag:
   key: ot_...
 ```
 
-The key is public by design: it ends up in the built HTML, like an analytics ID. The free plan has 1,000,000 tokens a month, with a hard cap, so no bill can appear.
+The key is public by design: it ends up in the built HTML, like an analytics ID. The free plan has 1,000,000 tokens, one time, no monthly reset, with a hard cap, so no bill can appear.
 
 ## Check that it works
 

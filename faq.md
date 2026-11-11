@@ -11,7 +11,7 @@ GitHub Pages builds sites with a fixed list of plugins and does not run any othe
 
 ## Is it safe to put the key in a public page?
 
-Yes. A OneTag AI key can only ask the AI questions, and it has a monthly cap. It cannot read anything, and it is not the key of an AI provider account with a bill behind it. If someone copies it, they share your month's allowance.
+Yes. A OneTag AI key can only ask the AI questions, and it has a hard cap. It cannot read anything, and it is not the key of an AI provider account with a bill behind it. If someone copies it, they share your month's allowance.
 
 ## What happens without a key?
 
